@@ -39,10 +39,29 @@ class Game:
         pygame.draw.line(screen, LINE_COLOR, (0, HEIGHT-SQSIZE), (WIDTH, HEIGHT-SQSIZE), LINE_WIDTH)
 
     def switch(self):
+        #1 is X, 2 is O
         if self.player == 1:
             self.player = 2
         else:
             self.player = 1
+
+    def draw(self, row, col):
+        if self.player == 1:
+            #draw cross
+            #descending line
+            start_desc = (col*SQSIZE + OFFSET, row * SQSIZE + OFFSET)
+            end_desc = (col * SQSIZE + SQSIZE - OFFSET, row * SQSIZE + SQSIZE - OFFSET)
+            pygame.draw.line(screen, CROSS_COLOR, start_desc, end_desc, CROSS_WIDTH)
+
+            #ascending line
+            start_asc = (col*SQSIZE + OFFSET, row * SQSIZE + SQSIZE - OFFSET)
+            end_asc= (col * SQSIZE + SQSIZE - OFFSET, row * SQSIZE + OFFSET)
+            pygame.draw.line(screen, CROSS_COLOR, start_asc, end_asc, CROSS_WIDTH)
+
+        else:
+            #draw circle
+            center = (col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2)
+            pygame.draw.circle(screen, CIRC_COLOR, center, RADIUS, CIRC_WIDTH)
 
 def main():
 
@@ -66,9 +85,9 @@ def main():
                 #means can't mark if already marked
                 if board.empty(row, col):
                     board.marked(row, col, game.player)
-                    
+                    game.draw(row, col)
                     game.switch()
-                    print(board.squares)
+                    
                 
 
                 
