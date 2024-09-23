@@ -1,6 +1,7 @@
 import sys
 import pygame
 import numpy as np
+import random
 
 from constants import *
 
@@ -8,6 +9,26 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('TIC TAC TOE AI')
 screen.fill(BG_COLOR)
+class AI:
+    
+    def __init__(self, diff=0, player=2):
+        self.diff = diff
+        self.player=player
+    
+    def random(self, board):
+        empty_sqr = board.get_empty_square()
+        i = random.randrange(0, len(empty_sqr))
+        return empty_sqr[i]
+    def eval(self, main_board):
+        #random
+        if self.diff == 0:
+            move = self.random(main_board)
+        #minimax
+        else:
+            pass
+
+
+        return move
 
 class Board:
 
@@ -46,7 +67,7 @@ class Board:
         empty_square = []
         for row in range(ROWS):
             for col in range(COLS):
-                if self.empty_square(row, col):
+                if self.empty(row, col):
                     empty_square.append((row, col))
 
         return empty_square
@@ -68,8 +89,8 @@ class Game:
     
     def __init__(self):
         self.consoleBoard = Board()
-        #self.ai = AI()
-        self.gamemode = 'pvp'
+        self.ai = AI()
+        self.gamemode = 'ai'
         self.running = True
         self.player = 1
         self.lines()
@@ -115,6 +136,7 @@ def main():
     #call game objecct
     game = Game()
     board = game.consoleBoard
+    ai = game.ai
     #mainloop
     while True:
 
@@ -135,7 +157,15 @@ def main():
                     game.draw(row, col)
                     game.switch()
                     
-                
+        if game.gamemode == 'ai' and game.player == ai.player:
+            pygame.display.update()
+
+
+            row, col = ai.eval(board)
+            board.marked(row, col, ai.player)
+            game.draw(row, col)
+            game.switch()
+           
 
                 
         pygame.display.update()
