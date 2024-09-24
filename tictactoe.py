@@ -2,6 +2,7 @@ import sys
 import pygame
 import numpy as np
 import random
+import copy
 
 from constants import *
 
@@ -11,7 +12,7 @@ pygame.display.set_caption('TIC TAC TOE AI')
 screen.fill(BG_COLOR)
 class AI:
     
-    def __init__(self, diff=0, player=2):
+    def __init__(self, diff=1, player=2):
         self.diff = diff
         self.player=player
     
@@ -19,15 +20,71 @@ class AI:
         empty_sqr = board.get_empty_square()
         i = random.randrange(0, len(empty_sqr))
         return empty_sqr[i]
+    
+    def minimax(self, board, maximizing):
+        
+        #check terminal case
+        case = board.final()
+        #player 1 wins
+        if case == 1:
+            return 1, None
+
+        
+        #player 2 wins
+        if case == 2:
+            return -1, None
+
+        
+
+        elif board.full:
+            print('test')
+            return 0, None
+        
+        
+
+        if maximizing:
+        #must be any number less than 1
+            max_eval = -101
+            best_move = None
+            empty_sqr = board.get_empty_square()
+
+            for (row, col) in empty_sqr:
+                temp = copy.deepcopy(board)
+                temp.marked(row, col, 1)
+                
+                #false now cuz it's minimizing player
+                eval = self.minimax(temp, False)[0]
+                if eval > max_eval:
+                    
+                    max_eval = eval
+                    best_move = (row, col)
+
+            return max_eval, best_move
+        elif not maximizing:
+            #must be any number greater than 1
+            min_eval = 101
+            best_move = None
+            empty_sqr = board.get_empty_square()
+            for (row, col) in empty_sqr:
+                temp = copy.deepcopy(board)
+                temp.marked(row, col, self.player)
+                eval = self.minimax(temp, True)[0]
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = (row, col)
+
+            return min_eval, best_move
+    
     def eval(self, main_board):
         #random
         if self.diff == 0:
+            eval = 'random'
             move = self.random(main_board)
         #minimax
         else:
-            pass
+            eval, move = self.minimax(main_board, False)
 
-
+        print(f'AI has marked square in position: {move} with an eval of: {eval}')
         return move
 
 class Board:
@@ -55,11 +112,11 @@ class Board:
 
         #descending diagonal
         if self.squares[0][0] == self.squares[1][1] == self.squares[2][2] != 0:
-            return self.squares[0][0]
+            return self.squares[1][1]
         
         #ascending diagonal
         if self.squares[2][0] == self.squares[1][1] == self.squares[0][2] != 0:
-            return self.squares[2][0]
+            return self.squares[1][1]
 
         return 0
         
