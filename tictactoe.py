@@ -12,7 +12,7 @@ pygame.display.set_caption('TIC TAC TOE AI')
 screen.fill(BG_COLOR)
 class AI:
     
-    def __init__(self, diff=1, player=2):
+    def __init__(self, diff=1, player=1):
         self.diff = diff
         self.player=player
     
@@ -34,13 +34,11 @@ class AI:
         if case == 2:
             return -1, None
 
-        
+        elif board.full():
 
-        elif board.full:
-            print('test')
             return 0, None
         
-        
+
 
         if maximizing:
         #must be any number less than 1
@@ -137,6 +135,7 @@ class Board:
         return self.squares[row][col] == 0
 
     def full(self):
+        
         return self.marked_square == 9
 
     def isempty(self):
@@ -216,7 +215,6 @@ def main():
                     
         if game.gamemode == 'ai' and game.player == ai.player:
             pygame.display.update()
-
 
             row, col = ai.eval(board)
             board.marked(row, col, ai.player)
